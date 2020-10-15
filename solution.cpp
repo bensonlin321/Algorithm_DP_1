@@ -35,7 +35,7 @@ public:
 
             // list all number (for one letter), require that input[i - 1] != '0'
             if (input[i - 1] > '0') {
-                dp[i] += dp[i - 1];
+                dp[i] += dp[i - 1]; // previous accumulated output
             }
             // list all number (for 2 letter), require that i > 1 and the number 
             // combine from input[i-1] and input[i-2] must be less than "26" and larger than "10"
