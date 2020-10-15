@@ -15,50 +15,38 @@
 
 class Solution {
 public:
-    void decode_string(std::string input, int *dp){
-
-        // 027 => 2,7
-        // dp[0] = 1
-        // dp[1] = 1
-        // prev  = 0, curr = 0
-        // prev  = 0, curr = 2
-        // dp[2] = 1
-        // prev  = 2, curr = 7
-        // dp[3] = 1
-
-        // 0114 => 11,4  1,14  1,1,4
-        // dp[0] = 1
-        // dp[1] = 1
-
+    int numDecodings(std::string input){
+        // 1213  =>  [1,2,1,3], [12,1,3], [1,21,3], [1,2,13], [12,13] => output:5
+        // 12715 =>  [1,2,7,1,5], [12,7,1,5], [12,7,15], [1,2,7,15] => output:4
 
         if(input.length() <= 0) {
-            return;
+            return 0;
         }
         int len = input.length();
         printf("len: %d\n", len);
-        dp = new int[len + 1];
+        int *dp = new int[len + 1];
         for (int i = 0; i < len + 1; i++) {
             dp[i] = 0;
         }
         dp[0] = 1; // Empty string
-        dp[1] = input.at(0) == '0' ? 1 : 0;
-        char prev = '0', curr = input.at(0);
+        printf("dp[0]:%d\n", dp[0]);
+        for (int i = 1; i <= input.length(); i++) {
+            printf("[%d] input[%d]:%c\n", i, i-1, input[i-1]);
 
-        printf("dp[0]:%d , dp[1]:%d\n", dp[0], dp[1]);
-
-        for (int i = 2; i <= len; i++) {
-            prev = curr;
-            curr = input.at(i-1);
-            printf("[%d] prev: %c, curr: %c\n", i, prev, curr);
-            if (curr != '0') {
-                dp[i] += dp[i-1];
+            // list all number (for one letter), require that input[i - 1] != '0'
+            if (input[i - 1] > '0') {
+                dp[i] += dp[i - 1];
             }
-            if (prev == '1' || (prev == '2' && curr <= '6')) {
-                dp[i] += dp[i-2];
+            // list all number (for 2 letter), require that i > 1 and the number 
+            // combine from input[i-1] and input[i-2] must be less than "26" and larger than "10"
+            if (i > 1 && input.substr(i - 2, 2) >= "10" && input.substr(i - 2, 2) <= "26") {
+                printf("[%d] input[%d] concat input[%d]:%c%c\n", i, i-2, i-1, input[i-2], input[i-1]);
+                dp[i] += dp[i - 2];
             }
-            printf("dp[%d]:%d\n", i, dp[i]);
+            printf("[%d] dp[%d]:%d\n", i, i, dp[i]);
         }
-        printf("dp[len]: %d\n", dp[len]);
+
+        return dp[len];
     }
 };
 
@@ -66,5 +54,5 @@ int main(int argc, char *argv[]) {
     Solution *s = new Solution();
     int *dp;
     std::string tmp = argv[1];
-    s -> decode_string(tmp, dp);
+    printf("output: %d\n", s -> numDecodings(tmp));
 }
